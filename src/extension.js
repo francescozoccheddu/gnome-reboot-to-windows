@@ -7,22 +7,17 @@ const getText = imports.gettext.domain(uuid).gettext;
 
 class Extension {
 
-  #menu;
   #menuItem;
   #dialog;
   #rebootIntervalId;
   #dialogMessageIntervalId;
-
-  constructor() {
-    this.#menu = ui.main.panel.statusArea.quickSettings._system.quickSettingsItems[0].menu;
-  }
 
   enable() {
     const indent = "      ";
     const itemLabel = `${indent}${getText("Restart into Windows")}...`;
     this.#menuItem = new ui.popupMenu.PopupImageMenuItem(itemLabel, "");
     this.#menuItem.connect("activate", () => this.#requestReboot());
-    this.#menu.addMenuItem(this.#menuItem, 2);
+    ui.main.panel.statusArea.quickSettings._system.quickSettingsItems[0].menu.addMenuItem(this.#menuItem, 2);
   }
 
   disable() {
@@ -97,7 +92,21 @@ class Extension {
 
   #reboot() {
     this.#cancelRebootRequest();
-    gi.GLib.spawn_command_line_async("%COMMAND%");
+    const managerInterface = `
+      <node>
+        <interface name="org.freedesktop.login1.Manager">
+          <method name="SetRebootToBootLoaderEntry">
+            <arg type="s" direction="in"/>
+          </method>
+          <method name="Reboot">
+            <arg type="b" direction="in"/>
+          </method>
+        </interface>
+      </node>`;
+    const Manager = gi.Gio.DBusProxy.makeProxyWrapper(managerInterface);
+    const proxy = new Manager(Gio.DBus.system, "org.freedesktop.login1", "/org/freedesktop/login1");
+    proxy.SetRebootToBootLoaderEntry("%ENTRY%")
+    proxy.Reboot(true)
   }
 
 }
