@@ -1,0 +1,11 @@
+{
+  "name": "Reboot to Windows",
+  "description": "Add an option to reboot into Windows in the quick settings poweroff menu.",
+  "license": "MIT",
+  "uuid": "reboot-to-windows@francescozoccheddu.com",
+  "url": "https://github.com/francescozoccheddu/gnome-reboot-to-windows",
+  "version": 1,
+  "shell-version": [
+    "43"
+  ]
+}
