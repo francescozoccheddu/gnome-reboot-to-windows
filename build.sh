@@ -1,14 +1,15 @@
 #!/bin/bash
 
 log() { echo "$@" 1>&2; }
-err() { log "$@" && exit 1; }
+die() { exit 1; }
+usg() { log "usage:"; log "$0 <COMMAND>"; log "(where COMMAND is the bootloader entry name for Windows)"; }
 
-COMMAND=$(<reboot-command.txt)
+[ "$#" -ne 1 ] && log "expected a single argument, got $#" && usg && die
 
-[ $(wc -l <<< "$COMMAND") = "1" ] || err "reboot-command.txt can only contain a single line"
-[[ "$COMMAND" =~ ^[a-zA-Z0-9_/-]*$ ]] || err "reboot-command.txt can only contain alphanumeric characters, forward slashes, underscores and hyphens"
+[ $(wc -l <<< "$1") -ne 1 ] && log "reboot command cannot contain multiple lines" && die
+[[ "$1" =~ [^a-zA-Z0-9_/-] ]] && log "reboot command can only contain alphanumeric characters, forward slashes, underscores and hyphens" && die
 
-rm -rf .build/
+rm -rf .build/COMMAND
 mkdir .build/
 
 cp src/extension.js .build/
@@ -16,7 +17,7 @@ cp src/metadata.json .build/
 
 cd .build
 
-sed -i -e "s|%COMMAND%|$COMMAND|g" extension.js
+sed -i -e "s|%COMMAND%|$1|g" extension.js
 
 gnome-extensions pack --out-dir=../ --force
 
@@ -24,5 +25,4 @@ cd ..
 
 rm -r .build/
 
-log "successfully built with hardcoded command '$COMMAND'"
-[ "$COMMAND" == "reboot-to-windows" ] && log "edit reboot-command.txt to change it"
+log "successfully built with hardcoded reboot command '$1'"

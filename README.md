@@ -13,17 +13,12 @@ Thank you [UbayGD](https://github.com/UbayGD)!
 git clone https://github.com/francescozoccheddu/gnome-reboot-to-windows
 cd gnome-reboot-to-windows
 ```
-2. Set your reboot command in `reboot-command.txt`:
+2. Build with your reboot command:
 ```shell
-echo "my-reboot-command" > reboot-command.txt
+./build.sh /usr/bin/call-bill
 ```
-3. Build and install the extension:
+3. Install the extension and restart Gnome:
 ```shell
-./build.sh
-./install.sh
+./install.sh -r
 ```
-4. Restart gnome:
-```shell
-killall -3 gnome-shell
-```
-5. Enjoy! 😉
+4. Enjoy! 😉
