@@ -9,7 +9,7 @@ usg() { log "usage:"; log "$0 <COMMAND>"; log "(where COMMAND is the bootloader 
 [ $(wc -l <<< "$1") -ne 1 ] && log "reboot command cannot contain multiple lines" && die
 [[ "$1" =~ [^a-zA-Z0-9_/-] ]] && log "reboot command can only contain alphanumeric characters, forward slashes, underscores and hyphens" && die
 
-rm -rf .build/COMMAND
+rm -rf .build/
 mkdir .build/
 
 cp src/extension.js .build/
